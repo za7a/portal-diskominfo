@@ -1,0 +1,106 @@
+{
+  "categories": [
+    {
+      "name": "Infrastruktur dan Hosting",
+      "slug": "infrastruktur-hosting"
+    },
+    {
+      "name": "Aplikasi dan Sistem Informasi",
+      "slug": "aplikasi"
+    },
+    {
+      "name": "Email dan Akun",
+      "slug": "email-akun"
+    },
+    {
+      "name": "Tanda Tangan Elektronik",
+      "slug": "tte"
+    },
+    {
+      "name": "Fasilitasi Acara",
+      "slug": "acara"
+    }
+  ],
+  "services": [
+    {
+      "category": "infrastruktur-hosting",
+      "title": "Sub Domain, Hosting, dan VPS",
+      "description": "Pengajuan subdomain lhokseumawekota.go.id, alokasi hosting, dan dukungan VPS bagi OPD.",
+      "syarat": "Surat pengantar OPD",
+      "sla_info": "2 sampai 3 hari kerja",
+      "keywords": "domain server",
+      "template_name": "Contoh Surat Permohonan Subdomain, Hosting, dan VPS",
+      "template_url": "assets/templates/contoh-surat-permohonan-subdomain-hosting-dan-vps.docx"
+    },
+    {
+      "category": "aplikasi",
+      "title": "Pembuatan dan Pengembangan Aplikasi",
+      "description": "Pengajuan pembuatan aplikasi baru atau pengembangan aplikasi milik OPD.",
+      "syarat": "KAK dan proses bisnis",
+      "sla_info": "Sesuai hasil kajian",
+      "keywords": "sistem software",
+      "template_name": "Contoh Surat Permohonan Pengembangan Aplikasi dan Format KAK",
+      "template_url": "assets/templates/contoh-surat-permohonan-pengembangan-aplikasi-dan-format-kak.docx"
+    },
+    {
+      "category": "tte",
+      "title": "Pengajuan Tanda Tangan Elektronik (TTE)",
+      "description": "Penerbitan TTE bagi pegawai ASN bekerja sama dengan BSrE BSSN.",
+      "syarat": "SK ASN dan KTP",
+      "sla_info": "Setelah verifikasi NIK",
+      "keywords": "tte bsre sertifikat",
+      "template_name": "Contoh Surat Permohonan TTE",
+      "template_url": "assets/templates/contoh-surat-permohonan-tte.docx"
+    },
+    {
+      "category": "email-akun",
+      "title": "Pembuatan Email Dinas",
+      "description": "Pembuatan akun email dinas @lhokseumawekota.go.id secara personal bagi ASN.",
+      "syarat": "NIP dan SK ASN",
+      "sla_info": "1 hari kerja",
+      "keywords": "email surel",
+      "template_name": "Contoh Surat Permohonan Email Dinas",
+      "template_url": "assets/templates/contoh-surat-permohonan-email-dinas.docx"
+    },
+    {
+      "category": "email-akun",
+      "title": "Reset Password Email Dinas",
+      "description": "Pemulihan kata sandi email dinas yang lupa atau terindikasi diretas.",
+      "syarat": "NIP dan nomor WhatsApp aktif",
+      "sla_info": "Setelah verifikasi NIP",
+      "keywords": "email sandi lupa",
+      "template_name": "Contoh Surat Permohonan Reset Password Email Dinas",
+      "template_url": "assets/templates/contoh-surat-permohonan-reset-password-email-dinas.docx"
+    },
+    {
+      "category": "infrastruktur-hosting",
+      "title": "Reset atau Permintaan Akun Cpanel",
+      "description": "Akses baru atau reset akun control panel website di server lhokseumawekota.go.id.",
+      "syarat": "Surat pengantar OPD",
+      "sla_info": "1 sampai 2 hari kerja",
+      "keywords": "cpanel hosting website",
+      "template_name": "Contoh Surat Permohonan Akun Cpanel",
+      "template_url": "assets/templates/contoh-surat-permohonan-akun-cpanel.docx"
+    },
+    {
+      "category": "infrastruktur-hosting",
+      "title": "Lupa Password Website OPD",
+      "description": "Reset username atau password admin website OPD di lhokseumawekota.go.id.",
+      "syarat": "Surat pengantar OPD",
+      "sla_info": "1 sampai 2 hari kerja",
+      "keywords": "cms admin sandi",
+      "template_name": "Contoh Surat Permohonan Reset Password Website OPD",
+      "template_url": "assets/templates/contoh-surat-permohonan-reset-password-website-opd.docx"
+    },
+    {
+      "category": "acara",
+      "title": "Permohonan Video Conference",
+      "description": "Fasilitasi video conference, peminjaman perangkat, dan pendampingan teknis.",
+      "syarat": "Surat permohonan kegiatan",
+      "sla_info": "Diajukan H-2 acara",
+      "keywords": "vicon zoom rapat",
+      "template_name": "Contoh Surat Permohonan Video Conference",
+      "template_url": "assets/templates/contoh-surat-permohonan-video-conference.docx"
+    }
+  ]
+}
