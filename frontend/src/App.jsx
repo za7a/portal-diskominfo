@@ -32,13 +32,18 @@ export default function App() {
       <TopStrip dark={dark} onToggle={toggle} />
       <Header />
       <main>
-        <Hero onSearch={cari} onTemplates={keContohSurat} />
-        <ServiceGrid services={services} query={query} galat={galat} onPick={setDipilih} />
-        <Stats />
-        <HelpTabs services={services} tab={tab} onTab={setTab} />
+        {!dipilih ? (
+          <>
+            <Hero onSearch={cari} onTemplates={keContohSurat} />
+            <ServiceGrid services={services} query={query} galat={galat} onPick={setDipilih} />
+            <Stats />
+            <HelpTabs services={services} tab={tab} onTab={setTab} />
+          </>
+        ) : (
+          <ServiceDialog service={dipilih} onClose={() => setDipilih(null)} />
+        )}
       </main>
       <Footer />
-      <ServiceDialog service={dipilih} onClose={() => setDipilih(null)} />
     </>
   );
 }

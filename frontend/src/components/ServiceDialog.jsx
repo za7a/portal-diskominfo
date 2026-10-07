@@ -1,21 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { createTicket } from "../api/client.js";
 
 const KOSONG = { nama: "", nip_nik: "", opd: "", whatsapp: "" };
 
 export default function ServiceDialog({ service, onClose }) {
-  const ref = useRef(null);
   const [form, setForm] = useState(KOSONG);
   const [galat, setGalat] = useState("");
   const [kode, setKode] = useState(null);
 
-  // Buka/tutup elemen <dialog> mengikuti prop `service`.
   useEffect(() => {
-    const d = ref.current;
     if (service) {
       setForm(KOSONG); setGalat(""); setKode(null);
-      if (!d.open) d.showModal();
-    } else if (d.open) d.close();
+      window.scrollTo(0, 0);
+    }
   }, [service]);
 
   const ubah = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -32,9 +29,11 @@ export default function ServiceDialog({ service, onClose }) {
     }
   }
 
+  if (!service) return null;
+
   return (
-    <dialog ref={ref} onClose={onClose}>
-      {service && !kode && (
+    <section className="wrap">
+      {!kode && (
         <form onSubmit={kirim}>
           <h3>{service.title}</h3>
           <div className="need">Dokumen yang disiapkan: {service.syarat}</div>
@@ -57,7 +56,7 @@ export default function ServiceDialog({ service, onClose }) {
           </div>
         </form>
       )}
-      {service && kode && (
+      {kode && (
         <div className="done">
           <h3>Pengajuan terkirim</h3>
           <p>Simpan kode pengajuan berikut untuk memeriksa status:</p>
@@ -65,6 +64,6 @@ export default function ServiceDialog({ service, onClose }) {
           <div className="acts"><button className="btn" onClick={onClose}>Tutup</button></div>
         </div>
       )}
-    </dialog>
+    </section>
   );
 }
