@@ -1,13 +1,15 @@
 """Konfigurasi aplikasi. Nilai dibaca dari environment / berkas .env."""
 import os
 import secrets
+from pathlib import Path
 
 from dotenv import load_dotenv
 
 load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./layanan.db")
-# Batas ukuran surat pemohon (disimpan di database).
+# Folder surat pemohon. Taruh DI LUAR folder yang disajikan web (jangan di frontend/public).
+UPLOAD_DIR = Path(os.getenv("UPLOAD_DIR", "uploads")).resolve()
 MAKS_UPLOAD_MB = int(os.getenv("MAKS_UPLOAD_MB", "5"))
 CORS_ORIGINS = [
     o.strip()

@@ -1,6 +1,9 @@
 import os
 
+import tempfile
+
 os.environ["DATABASE_URL"] = "sqlite:///./test.db"  # harus sebelum import app
+os.environ["UPLOAD_DIR"] = tempfile.mkdtemp(prefix="uji-surat-")
 
 import pytest
 from fastapi.testclient import TestClient

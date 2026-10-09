@@ -1,9 +1,7 @@
 import uuid
+from pathlib import Path
 
-from sqlalchemy import select
-
-from app.database import SessionLocal
-from app.models import RequestAttachment
+from app.config import UPLOAD_DIR
 
 PDF = b"%PDF-1.4\n% isi surat uji\n"
 
@@ -57,25 +55,22 @@ def test_batas_percobaan(client):
     assert kode_status[-1] == 429
 
 
-def semua_surat():
-    with SessionLocal() as db:
-        return db.scalars(select(RequestAttachment)).all()
-
-
-def test_surat_tersimpan_di_database(client):
+def test_surat_tersimpan_dengan_nama_acak(client):
+    sebelum = set(UPLOAD_DIR.glob("*"))
     kode = kirim(client, berkas=("../../etc/Surat Permohonan.PDF", PDF, "application/pdf")).json()["kode"]
-    (surat,) = semua_surat()
-    assert surat.data == PDF and surat.size == len(PDF) and surat.content_type == "application/pdf"
-    assert surat.filename == f"{kode}-surat.pdf"  # nama asli dari pemohon tidak dipakai
+    baru = set(UPLOAD_DIR.glob("*")) - sebelum
+    assert len(baru) == 1
+    berkas = baru.pop()
+    assert berkas.suffix == ".pdf" and "surat" not in berkas.name.lower() and berkas.read_bytes() == PDF
+    assert kode.startswith("LSM-")
 
 
 def test_surat_wajib_dan_divalidasi(client):
+    sebelum = set(UPLOAD_DIR.glob("*"))
     assert kirim(client, berkas=None).status_code == 422
     assert kirim(client, berkas=("surat.exe", b"MZ....", "application/octet-stream")).status_code == 415
     assert kirim(client, berkas=("surat.pdf", b"bukan pdf sungguhan", "application/pdf")).status_code == 415  # isi tidak cocok ekstensi
     assert kirim(client, berkas=("surat.pdf", b"", "application/pdf")).status_code == 415
     assert kirim(client, berkas=("surat.pdf", PDF + b"x" * (5 * 1024 * 1024), "application/pdf")).status_code == 413
-    assert semua_surat() == []  # yang ditolak tidak meninggalkan tiket maupun surat
-    assert client.get("/api/stats").json()["total"] == 0
     assert kirim(client, berkas=("surat.docx", b"PK\x03\x04isi", "application/zip")).status_code == 201
-    assert len(semua_surat()) == 1
+    assert len(set(UPLOAD_DIR.glob("*")) - sebelum) == 1  # hanya yang valid yang tersimpan

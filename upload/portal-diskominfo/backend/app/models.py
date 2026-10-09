@@ -3,7 +3,7 @@ import enum
 import uuid
 from datetime import datetime
 
-from sqlalchemy import JSON, Boolean, DateTime, Enum, ForeignKey, Integer, LargeBinary, String, Text, Uuid, func
+from sqlalchemy import JSON, Boolean, DateTime, Enum, ForeignKey, Integer, String, Text, Uuid, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -91,18 +91,3 @@ class RequestLog(Base):
     updated_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("admins.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     request: Mapped[ServiceRequest] = relationship(back_populates="logs")
-
-
-class RequestAttachment(Base):
-    """Surat pemohon, disimpan sebagai data biner di database (satu surat per pengajuan).
-
-    Sengaja tabel terpisah tanpa relationship: daftar pengajuan tidak ikut memuat isi berkas.
-    """
-    __tablename__ = "request_attachments"
-    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
-    request_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("service_requests.id", ondelete="CASCADE"), unique=True)
-    filename: Mapped[str] = mapped_column(String(255))
-    content_type: Mapped[str] = mapped_column(String(100))
-    size: Mapped[int] = mapped_column(Integer)
-    data: Mapped[bytes] = mapped_column(LargeBinary)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

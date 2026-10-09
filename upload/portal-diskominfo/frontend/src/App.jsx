@@ -34,8 +34,7 @@ export default function App() {
   // Pindah halaman publik <-> admin: admin mulai dari atas, halaman publik menuju bagian yang diklik di menu.
   useEffect(() => {
     document.title = modeAdmin ? "Admin | Layanan Diskominfo Kota Lhokseumawe" : "Layanan Diskominfo Kota Lhokseumawe";
-    // Jangan "return" hasil scrollTo: nilai yang dikembalikan effect dianggap fungsi pembersih oleh React.
-    if (modeAdmin) { window.scrollTo(0, 0); return; }
+    if (modeAdmin) return window.scrollTo(0, 0);
     const id = decodeURIComponent(location.hash.slice(1));
     if (id) requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView());
   }, [modeAdmin]);

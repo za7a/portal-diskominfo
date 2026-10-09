@@ -7,9 +7,9 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Upload
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.config import MAKS_UPLOAD_MB
+from app.config import MAKS_UPLOAD_MB, UPLOAD_DIR
 from app.database import get_db
-from app.models import RequestAttachment, RequestLog, Service, ServiceRequest, Status
+from app.models import RequestLog, Service, ServiceRequest, Status
 from app.ratelimit import batasi_cek
 from app.schemas import TicketCreated, TicketOut
 
@@ -27,11 +27,7 @@ def _kode_unik(db: Session) -> str:
 
 
 # Jenis surat yang diterima dan tanda awal isi berkasnya (bukan hanya cek ekstensi).
-JENIS_SURAT = {  # ekstensi: (awal isi berkas, tipe MIME)
-    ".pdf": (b"%PDF-", "application/pdf"),
-    ".docx": (b"PK\x03\x04", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
-    ".doc": (b"\xd0\xcf\x11\xe0", "application/msword"),
-}
+JENIS_SURAT = {".pdf": b"%PDF-", ".docx": b"PK\x03\x04", ".doc": b"\xd0\xcf\x11\xe0"}
 
 
 def _baca_surat(surat: UploadFile) -> tuple[bytes, str]:
@@ -39,7 +35,7 @@ def _baca_surat(surat: UploadFile) -> tuple[bytes, str]:
     isi = surat.file.read(MAKS_UPLOAD_MB * 1024 * 1024 + 1)
     if len(isi) > MAKS_UPLOAD_MB * 1024 * 1024:
         raise HTTPException(status_code=413, detail=f"Ukuran berkas melebihi {MAKS_UPLOAD_MB} MB")
-    if ext not in JENIS_SURAT or not isi.startswith(JENIS_SURAT[ext][0]):
+    if ext not in JENIS_SURAT or not isi.startswith(JENIS_SURAT[ext]):
         raise HTTPException(status_code=415, detail="Berkas harus berupa PDF, DOC, atau DOCX yang tidak rusak")
     return isi, ext
 
@@ -59,19 +55,22 @@ def buat_tiket(
     if layanan is None or not layanan.active:
         raise HTTPException(status_code=404, detail="Layanan tidak ditemukan")
     isi, ext = _baca_surat(surat)
+    # Nama berkas acak: nama asli dari pemohon tidak pernah dipakai di disk.
+    nama_berkas = secrets.token_hex(16) + ext
     req = ServiceRequest(
         ticket_code=_kode_unik(db), service_id=layanan.id, nama_pemohon=nama,
-        nip_nik=nip_nik, opd=opd, whatsapp=whatsapp,
+        nip_nik=nip_nik, opd=opd, whatsapp=whatsapp, attachment_url=nama_berkas,
     )
     req.logs.append(RequestLog(status_from=None, status_to=Status.ANTREAN.value, notes="Pengajuan diterima"))
-    db.add(req)
-    db.flush()
-    # Nama berkas dibuat dari kode tiket; nama asli dari pemohon tidak dipakai. Satu transaksi dengan tiketnya.
-    db.add(RequestAttachment(
-        request_id=req.id, filename=f"{req.ticket_code}-surat{ext}",
-        content_type=JENIS_SURAT[ext][1], size=len(isi), data=isi,
-    ))
-    db.commit()
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    tujuan = UPLOAD_DIR / nama_berkas
+    tujuan.write_bytes(isi)
+    try:
+        db.add(req)
+        db.commit()
+    except Exception:
+        tujuan.unlink(missing_ok=True)  # jangan tinggalkan berkas yatim bila database gagal
+        raise
     return {"kode": req.ticket_code}
 
 
